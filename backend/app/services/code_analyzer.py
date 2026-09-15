@@ -25,6 +25,42 @@ def calculate_score(issues: list[dict]) -> int:
     return max(0, score)
 
 
+def generate_summary(issues: list[dict]) -> str:
+    if not issues:
+        return "No obvious issues were detected."
+
+    severity_counts = {
+        "critical": 0,
+        "warning": 0,
+        "info": 0
+    }
+
+    for issue in issues:
+        severity = issue["severity"]
+
+        if severity in severity_counts:
+            severity_counts[severity] += 1
+
+    parts = []
+
+    if severity_counts["critical"] > 0:
+        parts.append(
+            f"{severity_counts['critical']} critical"
+        )
+
+    if severity_counts["warning"] > 0:
+        parts.append(
+            f"{severity_counts['warning']} warning"
+        )
+
+    if severity_counts["info"] > 0:
+        parts.append(
+            f"{severity_counts['info']} info"
+        )
+
+    return f"{len(issues)} issue(s) detected: {', '.join(parts)}."
+
+
 def analyze_python_code(code: str):
     try:
         tree = ast.parse(code)
@@ -36,6 +72,7 @@ def analyze_python_code(code: str):
                 {
                     "severity": "critical",
                     "category": "syntax",
+                    "rule": "syntax-error",
                     "line": error.lineno or 1,
                     "message": error.msg,
                     "suggestion": "Fix the syntax error before running the code."
@@ -54,11 +91,7 @@ def analyze_python_code(code: str):
     )
 
     score = calculate_score(issues)
-
-    if not issues:
-        summary = "No obvious issues were detected."
-    else:
-        summary = f"{len(issues)} issue(s) detected."
+    summary = generate_summary(issues)
 
     return {
         "score": score,
