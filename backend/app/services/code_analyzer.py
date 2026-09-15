@@ -25,6 +25,7 @@ def analyze_python_code(code: str):
 
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Name):
+
                 if node.func.id == "print":
                     issues.append({
                         "severity": "info",
@@ -54,6 +55,37 @@ def analyze_python_code(code: str):
                             "message": "Possible hardcoded password detected.",
                             "suggestion": "Never store passwords directly in source code."
                         })
+
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if alias.name == "*":
+                    issues.append({
+                        "severity": "warning",
+                        "category": "code-quality",
+                        "line": node.lineno,
+                        "message": "Wildcard import detected.",
+                        "suggestion": "Import only the specific names you need."
+                    })
+
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if len(node.args.args) > 5:
+                issues.append({
+                    "severity": "warning",
+                    "category": "code-quality",
+                    "line": node.lineno,
+                    "message": "Function has too many parameters.",
+                    "suggestion": "Consider grouping related parameters into an object or data structure."
+                })
+
+        if isinstance(node, ast.ExceptHandler):
+            if node.type is None:
+                issues.append({
+                    "severity": "warning",
+                    "category": "code-quality",
+                    "line": node.lineno,
+                    "message": "Generic exception handler detected.",
+                    "suggestion": "Catch specific exceptions instead of using a bare except."
+                })
 
     if not issues:
         score = 100
