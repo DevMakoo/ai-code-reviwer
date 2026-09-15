@@ -12,6 +12,7 @@ def detect_code_quality_issues(tree: ast.AST):
                     issues.append({
                         "severity": "info",
                         "category": "code-quality",
+                        "rule": "debug-print",
                         "line": node.lineno,
                         "message": "Debug output detected.",
                         "suggestion": "Consider using a logging system instead of print()."
@@ -23,6 +24,7 @@ def detect_code_quality_issues(tree: ast.AST):
                     issues.append({
                         "severity": "warning",
                         "category": "code-quality",
+                        "rule": "wildcard-import",
                         "line": node.lineno,
                         "message": "Wildcard import detected.",
                         "suggestion": "Import only the specific names you need."
@@ -33,6 +35,7 @@ def detect_code_quality_issues(tree: ast.AST):
                 issues.append({
                     "severity": "warning",
                     "category": "code-quality",
+                    "rule": "too-many-parameters",
                     "line": node.lineno,
                     "message": "Function has too many parameters.",
                     "suggestion": "Consider grouping related parameters into an object or data structure."
@@ -43,6 +46,7 @@ def detect_code_quality_issues(tree: ast.AST):
                 issues.append({
                     "severity": "warning",
                     "category": "code-quality",
+                    "rule": "bare-except",
                     "line": node.lineno,
                     "message": "Generic exception handler detected.",
                     "suggestion": "Catch specific exceptions instead of using a bare except."

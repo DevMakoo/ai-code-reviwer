@@ -9,6 +9,7 @@ class ReviewRequest(BaseModel):
 class Issue(BaseModel):
     severity: str
     category: str
+    rule: str
     line: int
     message: str
     suggestion: str

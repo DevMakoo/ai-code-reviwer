@@ -12,6 +12,7 @@ def detect_security_issues(tree: ast.AST):
                     issues.append({
                         "severity": "critical",
                         "category": "security",
+                        "rule": "unsafe-eval",
                         "line": node.lineno,
                         "message": "Use of eval() detected.",
                         "suggestion": "Avoid eval() because it can execute arbitrary code."
@@ -24,6 +25,7 @@ def detect_security_issues(tree: ast.AST):
                         issues.append({
                             "severity": "critical",
                             "category": "security",
+                            "rule": "hardcoded-password",
                             "line": node.lineno,
                             "message": "Possible hardcoded password detected.",
                             "suggestion": "Never store passwords directly in source code."
