@@ -4,6 +4,27 @@ from app.services.rules.security import detect_security_issues
 from app.services.rules.code_quality import detect_code_quality_issues
 
 
+SEVERITY_PENALTIES = {
+    "critical": 30,
+    "warning": 15,
+    "info": 5
+}
+
+
+def calculate_score(issues: list[dict]) -> int:
+    score = 100
+
+    for issue in issues:
+        penalty = SEVERITY_PENALTIES.get(
+            issue["severity"],
+            0
+        )
+
+        score -= penalty
+
+    return max(0, score)
+
+
 def analyze_python_code(code: str):
     try:
         tree = ast.parse(code)
@@ -32,11 +53,11 @@ def analyze_python_code(code: str):
         detect_code_quality_issues(tree)
     )
 
+    score = calculate_score(issues)
+
     if not issues:
-        score = 100
         summary = "No obvious issues were detected."
     else:
-        score = max(0, 100 - len(issues) * 15)
         summary = f"{len(issues)} issue(s) detected."
 
     return {
